@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 typedef struct {
-    char type[2];        // Magic identifier
+    uint16_t type;       // Magic identifier, 0x4d42 is the type of bmp
     uint32_t size;       // Size of BMP file
     uint16_t reserved1;  //
     uint16_t reserved2;  //
@@ -36,30 +37,18 @@ int main(int argc, char** argv) {
     }
 
     fread(&header, sizeof(BMPFILEHEADER), 1, image);
-    printf("Type:                        %c%c\n", header.type[0], header.type[1]);
-    printf("Size:                        %d\n", header.size);
-    printf("Verify:                      %d %d\n");
-    printf("Offset:                      %d\n", header.offset);
-
-    if (header.type[0] != 'B' || header.type[1] != 'M') {
-        printf("The file %s is not a valid BMP.", "assets/campo.bmp");
+    if (header.type != 0x4D42) {
+        printf("The file %s is not a valid BMP.\n", "assets/campo.bmp");
         fclose(image);
         return -1;
     }
 
     fread(&info_header, sizeof(BMPINFOHEADER), 1, image);
-    printf("Size of Header:              %d\n", info_header.size);
-    printf("Width:                       %d\n", info_header.width);
-    printf("Height:                      %d\n", info_header.height);
-    printf("Planes:                      %d\n", info_header.planes);
-    printf("Bits:                        %d\n", info_header.bits);
-    printf("Compression:                 %d\n", info_header.compression);
-    printf("Image Size:                  %d\n", info_header.img_size);
-    printf("Preferred x:                 %d\n", info_header.x_resolution);
-    printf("Preferred y:                 %d\n", info_header.y_resolution);
-    printf("Number of Colours:           %d\n", info_header.n_colours);
-    printf("Number of Important Colours: %d\n", info_header.important_colours);
+    if (info_header.bits != 24) {
+        printf("The file %s is not a valid BMP.\n", "assets/campo.bmp");
+        fclose(image);
+        return -1;
+    }
 
-    fclose(image);
     return 0;
 }
