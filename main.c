@@ -25,10 +25,10 @@ typedef struct {
 } __attribute__ ((packed)) BMPINFOHEADER;
 
 typedef struct {
-    uint32_t R;
-    uint32_t G;
-    uint32_t B;
-    uint32_t reserved; 
+    uint8_t R;
+    uint8_t G;
+    uint8_t B;
+    uint8_t reserved; 
 } PIXEL;
 
 int main(int argc, char** argv) {
@@ -80,7 +80,7 @@ int main(int argc, char** argv) {
             fread(&color, sizeof(PIXEL), 1, image);
             color.R = color.B;
             color.G = color.B;
-            color.B = color.R;
+            color.B = 0x00;
             // Give the updated pixel data to the result image
             fwrite(&color, sizeof(PIXEL), 1, result);
         }
