@@ -25,11 +25,10 @@ typedef struct {
 } __attribute__ ((packed)) BMPINFOHEADER;
 
 typedef struct {
-    uint8_t R;
-    uint8_t G;
     uint8_t B;
-    uint8_t reserved; 
-} PIXEL;
+    uint8_t G;
+    uint8_t R;
+} __attribute__ ((packed)) PIXEL;
 
 int main(int argc, char** argv) {
     
@@ -73,15 +72,14 @@ int main(int argc, char** argv) {
     fwrite(&info_header, sizeof(BMPINFOHEADER), 1, result);
     
     // Goes through all the pixels in the image and replace their colors
-    PIXEL color;
     for (int i = 0; i < info_header.height; i++) {
         for (int j = 0; j < info_header.width; j++) {
-            // Get the pixel data
+            PIXEL color;
+
             fread(&color, sizeof(PIXEL), 1, image);
-            color.R = color.B;
-            color.G = color.B;
-            color.B = 0x00;
-            // Give the updated pixel data to the result image
+            color.R = color.G;
+            color.G = color.G;
+            color.B = color.G;
             fwrite(&color, sizeof(PIXEL), 1, result);
         }
     }
